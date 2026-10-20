@@ -1,0 +1,9 @@
+// Copyright Epic Games, Inc. All Rights Reserved.
+
+#include "Capstone.h"
+#include "Modules/ModuleManager.h"
+
+IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, Capstone, "Capstone" );
+
+DEFINE_LOG_CATEGORY(LogCapstone)
+ 
