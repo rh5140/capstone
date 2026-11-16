@@ -13,6 +13,10 @@ is new (`BP_TA_*`, `BP_Inspect_*`, `BP_NPC_*`, `BP_StoryState`, `BP_DialogueMana
   - New function `TA_StepSound` with vars `StepSoundFloor`, `StepSoundGrass`, `StepSoundCarpet`: the footstep sound
     changes with the floor material. Floor and carpet use your wood steps; grass uses `TA_GrassSteps_Loop`.
   - The flipbook writes custom depth (stencil 2), used for the outline behind walls.
+  - Pause (Nov 16): new function `TA_TogglePause`, new bool `TA_PrevCursor` and an `Esc` key event (Execute When
+    Paused). It opens or closes our `WBP_TA_PauseMenu`: pause the game, show the cursor, input Game and UI; on close
+    the cursor goes back to what it was and input is Game only. Esc only reaches the pawn while its input is on, so
+    dialogue, cutscenes and the ending cannot be paused with Esc.
 - `BP_Interactable`
   - EndOverlap only clears the target when `InteractTarget == self`. Before, any overlap ending cleared it.
   - SetActive: when the player is already inside the box, it becomes the target on the next frame.
@@ -33,9 +37,12 @@ is new (`BP_TA_*`, `BP_Inspect_*`, `BP_NPC_*`, `BP_StoryState`, `BP_DialogueMana
     `UpdateTaskText` clears the second line first.
   - The opening text was "Task: Clean up your room". It is now "Clean up your room." with the second line
     "• Pick up your glowstick and Teddy."
-  - The task paper is scaled x1.2.
+  - The task paper is scaled x1.2 and slid 250 px left (Position X -250), so it ends sooner; the two task lines are
+    700 wide (were 820).
   - `ActionPrompt` / `InspectionText` are 30, cream-coloured, in a dark rounded box. An empty text hides the box.
   - The drawing popup is centred at 1100 x 619 and fades in and out.
+  - Pause icon (Nov 16): `Construct` binds `Button_3` OnClicked to a new custom event `TA_PauseClicked`, which calls
+    the player's `TA_TogglePause`. Your Construct was empty before.
   - A task sound plays in `UpdateTaskText`: `PMH_Drastic_BowedPlate_01` in N* stages, `maou_se_system17` otherwise.
 - `BP_CapstoneHUD`, `BP_Interactable_SceneChange`: iris transition timing. These changes were in the first PR and are
   already in the earlier commits.
@@ -51,6 +58,9 @@ is new (`BP_TA_*`, `BP_Inspect_*`, `BP_NPC_*`, `BP_StoryState`, `BP_DialogueMana
 - `Audio/FreeToUse` volumes: `slime-squish-12` 1.0 -> 0.316, `footsteps-on-wood-floor` 1.0 -> 1.603.
 - `Config/DefaultEngine.ini`: `r.CustomDepth=3` (outline, first PR). The navmesh settings are `CellSize` 19 -> 10
   and `AgentRadius` 34 -> 30. With those, the toad finds paths around the kitchen island.
+- Packaging (Nov 16): `DefaultEngine.ini` `GameDefaultMap` is `L_SafeRoom` (was the template's `Lvl_TopDown`).
+  `DefaultGame.ini` has `ProjectName=From the Shadows` and lists the 6 SafeRoom / Summer maps in `MapsToCook`.
+  Summer is opened by name, so without the list it is left out of the build.
 
 ## Placed actors in `L_Summer*`
 
