@@ -107,7 +107,8 @@ Blueprints only. Each new Blueprint has a Description (hover it in the Content B
   `UpdateTaskText` clears the sub line first (round5/task_two_lines.py). Ray's task updates (`BP_Interactable.NewTask`)
   take a second line from the new `NewTaskSub` (round5/task_sub_ray.py); the opening task, the kid's-room door, Mom1,
   Drawing A and ChangeWorld have one, no "Task:" prefix.
-- Depth of field: every world's post-process volume uses f/2.0 (Summer was 1.4, SafeRoom_Real 1.0; higher = sharper).
+- Depth of field: every world's post-process volume uses f/1.4 (SafeRoom_Real was 1.0; f/2.0 was tried and had too
+  little blur; higher = sharper).
 - Pause: Esc or the HUD pause icon -> `BP_CapstoneCharacter.TA_TogglePause` adds / removes `WBP_TA_PauseMenu`
   (BackgroundBlur + dim, Resume / Quit, a Controls list on the right; round5/build_pause.py). The SafeRoom intro
   hint (`TA_SR_Hint_Intro`) ends with "Press Esc to pause." In PIE, Esc stops the session; test with the icon.

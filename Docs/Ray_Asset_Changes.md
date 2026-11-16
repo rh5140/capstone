@@ -63,7 +63,11 @@ is new (`BP_TA_*`, `BP_Inspect_*`, `BP_NPC_*`, `BP_StoryState`, `BP_DialogueMana
   and `AgentRadius` 34 -> 30. With those, the toad finds paths around the kitchen island.
 - Packaging (Nov 16): `DefaultEngine.ini` `GameDefaultMap` is `L_SafeRoom` (was the template's `Lvl_TopDown`).
   `DefaultGame.ini` has `ProjectName=From the Shadows` and lists the 6 SafeRoom / Summer maps in `MapsToCook`.
-  Summer is opened by name, so without the list it is left out of the build.
+  Summer is opened by name, so without the list it is left out of the build. `IncludeDebugFiles=False` keeps the
+  216 MB .pdb out of the build.
+- `Capstone.uproject`: `NNEDenoiser` and `NNERuntimeORT` are disabled. The engine turns NNEDenoiser on by default and
+  it pulls in DirectML, onnxruntime and its denoiser models; the game does not use them. The build went from 762 MB
+  to 409 MB.
 
 ## Placed actors in `L_Summer*`
 
