@@ -107,8 +107,10 @@ Blueprints only. Each new Blueprint has a Description (hover it in the Content B
   `UpdateTaskText` clears the sub line first (round5/task_two_lines.py). Ray's task updates (`BP_Interactable.NewTask`)
   take a second line from the new `NewTaskSub` (round5/task_sub_ray.py); the opening task, the kid's-room door, Mom1,
   Drawing A and ChangeWorld have one, no "Task:" prefix.
+- Depth of field: every world's post-process volume uses f/2.0 (Summer was 1.4, SafeRoom_Real 1.0; higher = sharper).
 - Pause: Esc or the HUD pause icon -> `BP_CapstoneCharacter.TA_TogglePause` adds / removes `WBP_TA_PauseMenu`
-  (BackgroundBlur + dim, Resume / Quit; round5/build_pause.py). In PIE, Esc stops the session; test with the icon.
+  (BackgroundBlur + dim, Resume / Quit, a Controls list on the right; round5/build_pause.py). The SafeRoom intro
+  hint (`TA_SR_Hint_Intro`) ends with "Press Esc to pause." In PIE, Esc stops the session; test with the icon.
 - N2 bathroom: `Trigger_Bathroom` no longer plays E01 on entering (Stages []); one E on the shower curtain plays E01 +
   X_CURTAIN01 in one dialogue (one camera push-in) and switches to END (round5/bath_one_e.py).
 - `Blueprints/Dialogue/BP_TA_Ending`: Switch 4 at the shower curtain (Day, task paper hidden, party sound) and the

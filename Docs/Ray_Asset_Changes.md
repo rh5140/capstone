@@ -39,6 +39,9 @@ is new (`BP_TA_*`, `BP_Inspect_*`, `BP_NPC_*`, `BP_StoryState`, `BP_DialogueMana
     "• Pick up your glowstick and Teddy."
   - The task paper is scaled x1.2 and slid 250 px left (Position X -250), so it ends sooner; the two task lines are
     700 wide (were 820).
+  - The `GlowstickR` image (the "R" glowstick icon) is removed. `PopulateInventorySlot` case 0 now only shows
+    `Glowstick`; the node that showed `GlowstickR` is gone. `Btn_Glowstick_R` stays in `UI/`.
+  - `InspectionTextBox` sits at -245 from the bottom (was -215), so it no longer touches the `[E]` prompt box.
   - `ActionPrompt` / `InspectionText` are 30, cream-coloured, in a dark rounded box. An empty text hides the box.
   - The drawing popup is centred at 1100 x 619 and fades in and out.
   - Pause icon (Nov 16): `Construct` binds `Button_3` OnClicked to a new custom event `TA_PauseClicked`, which calls
