@@ -107,6 +107,90 @@ Blueprints only. Each new Blueprint has a Description (hover it in the Content B
   `UpdateTaskText` clears the sub line first (round5/task_two_lines.py). Ray's task updates (`BP_Interactable.NewTask`)
   take a second line from the new `NewTaskSub` (round5/task_sub_ray.py); the opening task, the kid's-room door, Mom1,
   Drawing A and ChangeWorld have one, no "Task:" prefix.
+- Day 1 Dad (Jiayi 5.1 F01-F07): `NPC_DadYard` by the deck cooler (360, -520), VisibleStages D0-D3, his own class so
+  the D4 cutscene Dad (`NPC_Dad`) is untouched. Mom M05 and Child A / B K07 / K08 (after the drawing) are in the rule
+  tables too. Night inspections in L_Summer_Night: N01 stroller, N02 round table, T08 flowerbed trail, HB04 washbasin,
+  HB05 towel rack (round5/place_r5z.py). L_SafeRoom: SR04 trash bag and SR05 papers / cans inspection points
+  (round5/place_saferoom_inspect.py). The N2 toad cannot path into the kid's room or the bathroom:
+  NavModifierVolumes with NavArea_Null across both doorways (`TA_NavBlock_*`, round5/toad_room_block.py).
+- Nov 17 playtest: `NPC_GuestFood` at (810, -1030) (mirrored sprite, off the chairs), `NPC_GuestLawn` + Ray's
+  `NPC_1_Sprite` at MK_02 (462, -1185); the three new NPCs have no blocking collision; `DadYard_Sprite` is attached to
+  `NPC_DadYard` so it hides with him in D4; `TA_DadCutscene.TalkRadius` 200 -> 120; navmesh agent radius 24 and toad
+  capsule 24 open both aisles beside the kitchen island (round5/fix_r6.py, toad_narrow.py).
+- Intro lines (Nov 17): `Blueprints/Dialogue/BP_TA_IntroLines` plays its `Lines` in the dialogue box `StartDelay`
+  (1.2 s) after the map starts. `TA_Intro_Summer` in `L_Summer` sits on the PlayerStart (the kid's room) with
+  X_START01..03 ("Where am I?!"). The SafeRoom box plays X_SR_BOX01, X_SR_PLUSH01..04 before the jump
+  (`DialogueMore` on `BP_Interactable`). The SafeRoom control hint is one line now (WASD / E / Esc).
+- `BP_TA_InteractPicker`: an inspection point counts `InspectPenalty` (150 cm) farther, so beds, doors, NPCs and
+  pickups win where triggers overlap. `L_SafeRoom` has one too now (`TA_SR_InteractPicker`). `BP_TA_IntroLines` can also
+  set the task paper (`TaskMain` / `TaskSub`); `TA_SR_Task` in the SafeRoom does only that.
+- `BP_Interactable_Inspect` Construction Script: the inherited placeholder Cube has no collision (it was an
+  invisible wall in the SafeRoom).
+- Teleport forget (Nov 17, round5/watchdog_teleport_forget.py): every Tick the watchdog compares the toad location
+  with `LastToadPos`; a jump of more than 400 cm (night start or caught reset putting the toad back at its start) sets
+  `ForgetUntil` = now + 4 and `InvestigateUntil` = 0, so a chase heard before the teleport does not carry over.
+- Guards (Nov 17, round5/fix_r9.py): the watchdog leaves the toad alone (icon only) while a dialogue is open or a
+  checkpoint reset runs (the dialogue manager stops the toad on purpose); the chase range does not take the toad from a
+  ringing lure, a board pull or a running search; `BP_DialogueManager.MoveHeld` makes the move-input hold one level
+  per dialogue; the alert widget ignores the mouse.
+- Horror swap (Nov 17): `BP_TA_Driver.Night()` starts by setting every `TA_HorrorMom` sprite to `Mom_Horror_Sprite` and
+  every `TA_HorrorDad` sprite to `Dad_Horror_Small_Sprite` at scale 0.376 (the cropped 503 px figure = the 945 px figure
+  of Dad_Normal at 0.2); `Day()` sets the normal sprites back. Night() runs as the iris starts to close, so Mom changes
+  right before Switch 1 goes dark and Dad (walking away) before Switch 3 (round5/horror_tags.py, horror_swap.py).
+- Toad chase range (Nov 17): footsteps 300 grass / 400 floor. `BP_TA_ToadWatchdog.TA_ChaseRange`: a chasing toad that
+  is farther than ChaseRange (500) from the player stops following them and walks to the last place it heard them
+  (LastHeard), searching for InvestigateSeconds (4, ? over its head), then patrols; hearing the player again inside the
+  range restarts the chase (round5/toad_chase_range.py). D4: Dad's walk away is three points (the far-corner leg is cut).
+- Toad hearing (Nov 17): the toad only hears. Its controller chases a noise whose instigator has the EnemyTarget tag
+  (the player). Our boards / cans and plush lures report their noise with themselves as instigator
+  (`ReportNoiseEvent`), so they pull the toad with their own MoveTo and show ? instead of revealing the player.
+  Player footsteps (120 grass / 240 floor) are what start a chase; Hearing MaxAge 3 s + LineOfSightTimer 3 s end it.
+  The lure rings are Movable and attached to their lure (a Static child lost the attachment on reload).
+- Toad alert icon: `BP_TA_ToadWatchdog.TA_UpdateAlert` (start of Tick) shows `WBP_TA_ToadAlert` over the toad's head:
+  red ! while it chases (blackboard HasLineOfSight, not forgetting) with `PMH_Shock_Ricochet_01`, yellow ? while a lure
+  rings or for 4 s after a board / can pulls it (`BP_TA_CreakBoard` sets the watchdog's AlertUntil) with the frog
+  croak. Sounds play once per state change (round5/build_toad_alert.py).
+- Party guests (Jiayi section 6, A01-A07 split by topic): `NPC_GuestFood` by the long party table (A01 / A02 in D0,
+  A05 / A06 in D2-D3) and `NPC_GuestLawn` on Ray's NPC_1 sprite (A03 / A04, A07 once after the toad). Day Mom stands
+  right of the stroller (965, -320), clear of the umbrella; NPC trigger boxes near the stroller are 60-70 so they do not overlap
+  (round5/mom_by_baby.py, place_guests.py; the check is printed by place_guests.py).
+- Toad chase: `BP_SummerToadController.LineOfSightTimer` is 3 (was 0: the chase never ended). `BP_TA_ToadWatchdog`:
+  standing still is speed < 25; still while chasing past Threshold -> `TA_ForgetPlayer` (chase keys cleared, and kept
+  cleared every frame for ForgetSeconds = 4) -> next patrol point (round5/toad_forget.py).
+- Toad priorities (Nov 18, round5/toad_player_first.py): footsteps are 300 grass / 400 floor again (they had gone back
+  to 120 / 170). `BP_TA_ToadWatchdog.TA_PlayerFirst` runs every Tick after `TA_ChaseRange`: ! comes first - if the
+  toad hears the player while a lure, a board or a search has stopped its tree, the ? ends and Ray's tree chases.
+  While it chases, searches or is in the teleport forget window, `PatrolIndex` is set to its nearest patrol point, so
+  after a chase it walks to the closest one. ChaseRange (now 700) stays above the footstep range.
+- Losing the toad (Nov 18, round5/toad_lost_wait.py): the placed `TA_ToadWatchdog` had ChaseRange / InvestigateSeconds
+  0 (every chase dropped at once); now 700 / 3 (round5/toad_lost_wait_editor.py). When a chase ends - beyond ChaseRange
+  or by Ray's LineOfSightTimer (`TA_LostWait`) - the toad stops where it is with ? for InvestigateSeconds (3 s, it
+  no longer walks to LastHeard), then its tree restarts and it walks to the nearest patrol point. Hearing the player
+  during the wait is a chase again. The 2.5 s stuck rule ignores a waiting toad.
+- Phone lure first (Nov 18 evening, round5/lure_top.py): while any `BP_TA_Lure` rings, the toad goes to it and stays
+  for the whole 12 s; the watchdog's "! first" restart, the lost-player wait and the red ! all check
+  `TA_AnyLureBusy` first, and boards / cans already skip it. Footsteps 250 grass / 300 floor; ChaseRange 700.
+- End card sound (Nov 18, round5/ending_music_only.py): when the end text starts, `BP_TA_Ending` pushes
+  `Audio/Classes/SM_TA_EndFade` (SC_Ambience / SC_SFX / SC_Creature / SC_Foley to 0 over 2.5 s), so only the
+  SC_Music BGM is left by "END"; it pops the mix right before OpenLevel L_SafeRoom.
+- String tables in L_SafeRoom (Nov 18, round5/saferoom_tables_ref.py): `BP_DialogueManager.Tables` (default = the
+  four tables) hard-references them, so they load with the SafeRoom too; before, the first SafeRoom line in a
+  packaged game could show <MISSING STRING TABLE ENTRY> (only L_Summer's Story_State referenced them).
+- Task paper (Nov 18, round5/task_fit_paper.py): task lines 590 wide; sub lines under 40 characters.
+- Day 2 end (Nov 18): after the last talk at the window (Step 7) Dad turns into the horror cutout on the spot
+  (`TA_DadCutscene.TA_CutStep`); `PathLeave` is his spot only, so he does not walk away (round5/dad_stand_still_editor.py,
+  old path in dad_stand_still_before.json). Day 2 starts with the normal Mom / Dad: `BP_TA_Driver.Swap_Day` sets them
+  0.3 s after the Day level is back (`TA_RestoreDaySprites`, round5/horror_dad_door.py).
+- Dialogue box for Ray's interactables: tick `UseDialogueBox` and set `DialogueLine` on any `BP_Interactable` instance;
+  E plays the line in the dialogue box (player held), and the pickup / door / scene change runs after the last line.
+  Used by the intro glowstick, Teddy, the kid's room door and the SafeRoom desk, bed and plush (round5/
+  dialogue_box_interactables.py, dialogue_box_place.py). Lines X_GLOW01 ... X_SR_PLUSH01 in summer_dialogue.csv.
+  `BP_TA_Camera` skips its StoryState check where there is none (L_SafeRoom).
+- Holding the player: walking is in the C++ `CapstonePlayerController`, so a pawn `DisableInput` alone does not stop
+  it. Every place that holds the player also calls the controller's `SetIgnoreMoveInput(true)`: `BP_DialogueManager`
+  (one level off again in `Finish`, since the flag is a counter and a dialogue can run inside a cutscene),
+  `BP_TA_DadCutscene`, `BP_TA_Ending`, `BP_TA_Checkpoint`, `BP_TA_HopToad` (`ResetIgnoreMoveInput` when they let go).
+  New code that freezes the player should do the same (round5/dialogue_no_move.py).
 - Depth of field: every world's post-process volume uses f/1.4 (SafeRoom_Real was 1.0; f/2.0 was tried and had too
   little blur; higher = sharper).
 - Pause: Esc or the HUD pause icon -> `BP_CapstoneCharacter.TA_TogglePause` adds / removes `WBP_TA_PauseMenu`
